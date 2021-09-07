@@ -29,6 +29,8 @@ function App() {
   }
 
   useEffect(()=>{
+
+    if (data !== '' || data !== "canceled") 
     base('Table 1').select().eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
          const idCode = record.get('idCode');
@@ -78,19 +80,19 @@ const handleSubmit = (e) => {
 
   for (let item in airtableData) {
     if (airtableData[item].firstName.toLowerCase().trim() === e.target.firstName.value.toLowerCase().trim() && airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()) {
-
-     
       setManualCheckIn({
-        found: true,
+        found: "found",
         id: airtableData[item].id,
         firstName: e.target.firstName.value,
         lastName: e.target.lastName.value,
       })
+
       return
     } 
   }
+console.log("should not have got here")
   setManualCheckIn({
-    found: false,
+    found: "not found",
     firstName: e.target.firstName.value,
     lastName: e.target.lastName.value,
   })
@@ -167,11 +169,11 @@ console.log(manualCheckIn)
       }
       <section className="codes">
       {/* show barcodes  */}
-      {/* {dataArray.map((id) => (
-        <div style={{marginBottom: "250px"}}>
+      {dataArray.map((id) => (
+        <div style={{marginBottom: "100vh"}}>
         <Barcode id={id} value={id} />
         </div>
-      ))} */}
+      ))}
 
       {/* SEARCH */}
       {search && (
@@ -179,13 +181,23 @@ console.log(manualCheckIn)
       <div>
       <h4>Search Database</h4>
       {manualCheckIn ? (
-        <div >
-          <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>{manualCheckIn.found ? "Found" : "Not found"} in database.</p>
-          <div style={{display: "flex"}}>
-
-          {manualCheckIn.found && <button className="add" onClick={() => handleCheckIn()}>Check in manually?</button> }
-          <button className="clear" onClick={() => setManualCheckIn("")}>Cancle</button>
+        <div>
+        {manualCheckIn === "found" && (
+          <div>
+            <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Found in database.</p>
+            <div style={{display: "flex"}}>
+              <button className="add" onClick={() => handleCheckIn()}>Check in manually?</button>
+              <button className="clear" onClick={() => setManualCheckIn("")}>Cancle</button>
+            </div>
           </div>
+        )}
+
+        {manualCheckIn.found === "not found" && (
+          <div>
+            <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Not found in database.</p>
+            <button className="clear" onClick={() => setManualCheckIn("")}>Clear</button>
+          </div>
+        )}
         </div>) : (
 
         <form onSubmit={(e) => handleSubmit(e)}  ref={inputEl}>
