@@ -15,7 +15,6 @@ const base = new Airtable({apiKey: KEY}).base('appLIkbpURZaoR4qA');
 
 function App() {
   const [ data, setData ] = useState("canceled");
-  const [fetchData, setFetchData] = useState(0)
   const [airtableData, setAirtableData] = useState({})
   const [playGoodSound] = useSound(goodBeep)
   const [playBadSound] = useSound(errorBeep)
@@ -47,7 +46,7 @@ function App() {
   }, function done(err) {
       if (err) { console.error(err); return; }
   });
-  },[fetchData])
+  },[])
 
   useEffect(()=>{
      if (data && data !== "canceled" && airtableData[data]?.CheckedIn ) {
@@ -79,16 +78,18 @@ const handleSubmit = (e) => {
 
   for (let item in airtableData) {
     if (airtableData[item].firstName.toLowerCase().trim() === e.target.firstName.value.toLowerCase().trim() && airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()) {
+
+     
       setManualCheckIn({
         found: "found",
         id: airtableData[item].id,
         firstName: e.target.firstName.value,
         lastName: e.target.lastName.value,
       })
-
       return
     } 
   }
+  
   setManualCheckIn({
     found: "not found",
     firstName: e.target.firstName.value,
@@ -115,7 +116,27 @@ const handleCheckIn = () => {
   });
 } 
 
-console.log(manualCheckIn)
+const runDataFetcher = () => {
+  setData('')
+  
+  base('Table 1').select().eachPage(function page(records, fetchNextPage) {
+    records.forEach(function(record) {
+       const idCode = record.get('idCode');
+        const obj = {
+          id: record.id,
+          idCode, 
+          firstName: record.get('firstName'), 
+          lastName: record.get('lastName'), 
+          CheckedIn: record.get('CheckedIn'), 
+        }
+        setAirtableData(state => ({...state, [idCode]:obj}))
+    });
+    fetchNextPage();
+
+}, function done(err) {
+    if (err) { console.error(err); return; }
+});
+}
 
   return (
     <div className="App">
@@ -136,7 +157,7 @@ console.log(manualCheckIn)
       ) : (
         <div className="new_scan">
           <span className="box">&nbsp;</span>
-          <button onClick={()=> setFetchData(fetchData + 1)}>New Scan</button>
+          <button onClick={()=> runDataFetcher()}>New Scan</button>
           <button style={{fontSize: "1rem"}} onClick={()=> setSearch(!search)}>{search ? "Cancel" : "Search Database" }</button>
         </div>
       )}
@@ -167,11 +188,11 @@ console.log(manualCheckIn)
       }
       <section className="codes">
       {/* show barcodes  */}
-      {/* {dataArray.map((id) => (
+      {dataArray.map((id) => (
         <div style={{marginBottom: "450px"}}>
         <Barcode id={id} value={id} />
         </div>
-      ))} */}
+      ))}
 
       {/* SEARCH */}
       {search && (
