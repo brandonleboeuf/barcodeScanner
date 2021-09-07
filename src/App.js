@@ -118,7 +118,7 @@ const handleCheckIn = () => {
 
 const runDataFetcher = () => {
   setData('')
-  
+
   base('Table 1').select().eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
        const idCode = record.get('idCode');
@@ -187,12 +187,7 @@ const runDataFetcher = () => {
         )
       }
       <section className="codes">
-      {/* show barcodes  */}
-      {dataArray.map((id) => (
-        <div style={{marginBottom: "450px"}}>
-        <Barcode id={id} value={id} />
-        </div>
-      ))}
+   
 
       {/* SEARCH */}
       {search && (
@@ -201,7 +196,7 @@ const runDataFetcher = () => {
       <h4>Search Database</h4>
       {manualCheckIn ? (
         <div>
-        {manualCheckIn === "found" && (
+        {manualCheckIn.found === "found" && (
           <div>
             <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Found in database.</p>
             <div style={{display: "flex"}}>
@@ -233,6 +228,12 @@ const runDataFetcher = () => {
       </div>
       )}
       </section>
+      {/* show barcodes  */}
+      {dataArray.map((id) => (
+        <div style={{marginBottom: "100vh"}}>
+        <Barcode id={id} value={id} />
+      </div>
+      ))}
     </div>
   )
 }
