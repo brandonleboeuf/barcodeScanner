@@ -30,7 +30,7 @@ function App() {
 
   useEffect(()=>{
     base('Table 1').select().eachPage(function page(records, fetchNextPage) {
-      records.forEach(function(record) {
+      records.forEach((record) => {
          const idCode = record.get('idCode');
           const obj = {
             id: record.id,
@@ -73,14 +73,14 @@ function App() {
     
   },[data])
 
-  console.log(airtableData)
-  console.log({dataArray})
+  console.log({manualCheckIn})
 
 const handleSubmit = (e) => {
   e.preventDefault()
 
   for (let item in airtableData) {
-    if (airtableData[item].firstName.toLowerCase().trim() === e.target.firstName.value.toLowerCase().trim() && airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()) {
+    if (
+      airtableData[item].firstName.toLowerCase().trim() === e.target.firstName.value.toLowerCase().trim() && airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()) {
 
      
       setManualCheckIn({
@@ -114,8 +114,11 @@ const handleCheckIn = () => {
       console.error(err);
       return;
     }
-   console.log(records)
-    setManualCheckIn('')
+   
+    setManualCheckIn((state) => (
+      {...state,
+      found: "success",
+    }))
   });
 } 
 
@@ -215,27 +218,37 @@ const runDataFetcher = () => {
             <button className="clear" onClick={() => setManualCheckIn("")}>Clear</button>
           </div>
         )}
+
+        
         </div>) : (
-
+        <>
+          {manualCheckIn.found === "success" && (
+              <div>
+              <h1 className="success">SUCCESS</h1>
+              <h2>{manualCheckIn.firstName} {manualCheckIn.lastName} has been checked in.</h2>
+              <p> Enjoy the event!</p>
+            </div>
+          )}
         <form onSubmit={(e) => handleSubmit(e)}  ref={inputEl}>
-        <div style={{display: "flex", flexDirection: "column"}}>
+          <div style={{display: "flex", flexDirection: "column"}}>
 
-          <label htmlFor="firstName">First Name <input id="firstName"/></label>
-          
-          <label htmlFor="lastName">Last Name <input id="lastName"/></label>
-        </div>
-        <button className="add" type="submit">Search</button>
-        <button className="clear" onClick={()=> inputEl.current.reset() }>Clear Fields</button>
+            <label htmlFor="firstName">First Name <input id="firstName"/></label>
+            
+            <label htmlFor="lastName">Last Name <input id="lastName"/></label>
+          </div>
+          <button className="add" type="submit">Search</button>
+          <button className="clear" onClick={()=> inputEl.current.reset() }>Clear Fields</button>
         </form>
+        </>
         )}
       </div>
       )}
       </section>
       {/* show barcodes  */}
       {/* {dataArray.map((id) => (
-        <div style={{marginBottom: "100vh"}}>
-          <Barcode id={id} value={id} />
-       </div>
+        <div style={{marginBottom: "450px"}}>
+        <Barcode id={id} value={id} />
+        </div>
       ))} */}
     </div>
   )
