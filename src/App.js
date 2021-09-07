@@ -3,7 +3,8 @@ import {useEffect, useState, useRef} from 'react';
 import useSound from 'use-sound';
 import goodBeep from './good_beep.mp3'
 import errorBeep from './error_beep.mp3'
-import BarcodeScannerComponent from "react-webcam-barcode-scanner";
+// import BarcodeScannerComponent from "react-webcam-barcode-scanner";
+import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import Airtable from 'airtable';
 import Barcode from 'react-barcode'
 
@@ -166,11 +167,11 @@ console.log(manualCheckIn)
       }
       <section className="codes">
       {/* show barcodes  */}
-      {dataArray.map((id) => (
-        <div style={{marginBottom: "150px"}}>
+      {/* {dataArray.map((id) => (
+        <div style={{marginBottom: "250px"}}>
         <Barcode id={id} value={id} />
         </div>
-      ))}
+      ))} */}
 
       {/* SEARCH */}
       {search && (
