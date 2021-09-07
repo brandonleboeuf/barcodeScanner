@@ -6,9 +6,17 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "airtable": "^0.11.1",
     "react": "^17.0.2",
+    "react-barcode": "^1.4.0",
+    "react-barcodes": "^1.1.0",
     "react-dom": "^17.0.2",
+    "react-download-svg": "^0.0.4",
     "react-scripts": "4.0.3",
+    "react-webcam-barcode-scanner": "^0.0.2-rc2",
+    "save-svg-as-png": "^1.4.17",
+    "semantic-ui-react": "^2.0.3",
+    "use-sound": "^4.0.1",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
