@@ -30,7 +30,7 @@ function App() {
 
   useEffect(()=>{
 
-    if (data !== '' || data !== "canceled") 
+    if (data !== '' || data !== "canceled") return
     base('Table 1').select().eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
          const idCode = record.get('idCode');
@@ -169,11 +169,11 @@ console.log(manualCheckIn)
       }
       <section className="codes">
       {/* show barcodes  */}
-      {dataArray.map((id) => (
+      {/* {dataArray.map((id) => (
         <div style={{marginBottom: "100vh"}}>
         <Barcode id={id} value={id} />
         </div>
-      ))}
+      ))} */}
 
       {/* SEARCH */}
       {search && (
