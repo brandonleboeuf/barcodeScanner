@@ -5,11 +5,11 @@
   "private": true,
   "dependencies": {
     "airtable": "^0.11.1",
-    "gh-pages": "^3.2.3",
     "react": "^17.0.2",
     "react-barcode": "^1.4.0",
     "react-barcodes": "^1.1.0",
     "react-dom": "^17.0.2",
+    "react-qr-barcode-scanner": "^1.0.6",
     "react-scripts": "4.0.3",
     "react-webcam-barcode-scanner": "^0.0.2-rc2",
     "use-sound": "^4.0.1"
@@ -37,5 +37,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
   }
 }

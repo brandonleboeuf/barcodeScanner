@@ -5,7 +5,7 @@ import goodBeep from './good_beep.mp3'
 import errorBeep from './error_beep.mp3'
 import BarcodeScannerComponent from "react-webcam-barcode-scanner";
 import Airtable from 'airtable';
-// import Barcode from 'react-barcode'
+import Barcode from 'react-barcode'
 
 import './App.css';
 const KEY = process.env.REACT_APP_AIRTABLE_API_KEY
@@ -166,11 +166,11 @@ console.log(manualCheckIn)
       }
       <section className="codes">
       {/* show barcodes  */}
-      {/* {dataArray.map((id) => (
-        <div style={{marginBottom: "25px"}}>
+      {dataArray.map((id) => (
+        <div style={{marginBottom: "150px"}}>
         <Barcode id={id} value={id} />
         </div>
-      ))} */}
+      ))}
 
       {/* SEARCH */}
       {search && (
@@ -179,7 +179,7 @@ console.log(manualCheckIn)
       <h4>Search Database</h4>
       {manualCheckIn ? (
         <div >
-          <p>{manualCheckIn.firstName} {manualCheckIn.lastName}: {manualCheckIn.found ? "Found" : "Not found"} in database.</p>
+          <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>{manualCheckIn.found ? "Found" : "Not found"} in database.</p>
           <div style={{display: "flex"}}>
 
           {manualCheckIn.found && <button className="add" onClick={() => handleCheckIn()}>Check in manually?</button> }
