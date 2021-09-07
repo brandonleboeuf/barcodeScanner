@@ -15,6 +15,7 @@ const base = new Airtable({apiKey: KEY}).base('appLIkbpURZaoR4qA');
 
 function App() {
   const [ data, setData ] = useState("canceled");
+  const [fetchData, setFetchData] = useState(0)
   const [airtableData, setAirtableData] = useState({})
   const [playGoodSound] = useSound(goodBeep)
   const [playBadSound] = useSound(errorBeep)
@@ -29,8 +30,6 @@ function App() {
   }
 
   useEffect(()=>{
-
-    if (data !== '' || data !== "canceled") return
     base('Table 1').select().eachPage(function page(records, fetchNextPage) {
       records.forEach(function(record) {
          const idCode = record.get('idCode');
@@ -48,7 +47,7 @@ function App() {
   }, function done(err) {
       if (err) { console.error(err); return; }
   });
-  },[data])
+  },[fetchData])
 
   useEffect(()=>{
      if (data && data !== "canceled" && airtableData[data]?.CheckedIn ) {
@@ -90,7 +89,6 @@ const handleSubmit = (e) => {
       return
     } 
   }
-console.log("should not have got here")
   setManualCheckIn({
     found: "not found",
     firstName: e.target.firstName.value,
@@ -138,7 +136,7 @@ console.log(manualCheckIn)
       ) : (
         <div className="new_scan">
           <span className="box">&nbsp;</span>
-          <button onClick={()=> setData('')}>New Scan</button>
+          <button onClick={()=> setFetchData(fetchData + 1)}>New Scan</button>
           <button style={{fontSize: "1rem"}} onClick={()=> setSearch(!search)}>{search ? "Cancel" : "Search Database" }</button>
         </div>
       )}
@@ -170,7 +168,7 @@ console.log(manualCheckIn)
       <section className="codes">
       {/* show barcodes  */}
       {/* {dataArray.map((id) => (
-        <div style={{marginBottom: "100vh"}}>
+        <div style={{marginBottom: "450px"}}>
         <Barcode id={id} value={id} />
         </div>
       ))} */}
