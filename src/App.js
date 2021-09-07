@@ -73,6 +73,9 @@ function App() {
     
   },[data])
 
+  console.log(airtableData)
+  console.log({dataArray})
+
 const handleSubmit = (e) => {
   e.preventDefault()
 
@@ -229,11 +232,11 @@ const runDataFetcher = () => {
       )}
       </section>
       {/* show barcodes  */}
-      {dataArray.map((id) => (
+      {/* {dataArray.map((id) => (
         <div style={{marginBottom: "100vh"}}>
-        <Barcode id={id} value={id} />
-      </div>
-      ))}
+          <Barcode id={id} value={id} />
+       </div>
+      ))} */}
     </div>
   )
 }
