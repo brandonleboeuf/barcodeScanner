@@ -202,7 +202,7 @@ const runDataFetcher = () => {
       <h4>Search Database</h4>
       {manualCheckIn ? (
         <div>
-        {manualCheckIn.found === "found" && (
+        {manualCheckIn?.found === "found" && (
           <div>
             <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Found in database.</p>
             <div style={{display: "flex"}}>
@@ -212,7 +212,7 @@ const runDataFetcher = () => {
           </div>
         )}
 
-        {manualCheckIn.found === "not found" && (
+        {manualCheckIn?.found === "not found" && (
           <div>
             <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Not found in database.</p>
             <button className="clear" onClick={() => setManualCheckIn("")}>Clear</button>
@@ -222,7 +222,7 @@ const runDataFetcher = () => {
         
         </div>) : (
         <>
-          {manualCheckIn.found === "success" && (
+          {manualCheckIn?.found === "success" && (
               <div>
               <h1 className="success">SUCCESS</h1>
               <h2>{manualCheckIn.firstName} {manualCheckIn.lastName} has been checked in.</h2>
