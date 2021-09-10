@@ -126,6 +126,7 @@ const handleCheckIn = () => {
 
 const runDataFetcher = () => {
   setData('')
+  setSearch(!search)
 
   base('Table 1').select().eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
