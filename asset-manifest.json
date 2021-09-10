@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/barcodeScanner/static/css/main.7744963c.chunk.css",
+    "main.css": "/barcodeScanner/static/css/main.4a5ef915.chunk.css",
     "main.js": "/barcodeScanner/static/js/main.06a20ed1.chunk.js",
     "main.js.map": "/barcodeScanner/static/js/main.06a20ed1.chunk.js.map",
     "runtime-main.js": "/barcodeScanner/static/js/runtime-main.4ea7edb4.js",
@@ -10,7 +10,7 @@
     "static/js/3.8a4a7c17.chunk.js": "/barcodeScanner/static/js/3.8a4a7c17.chunk.js",
     "static/js/3.8a4a7c17.chunk.js.map": "/barcodeScanner/static/js/3.8a4a7c17.chunk.js.map",
     "index.html": "/barcodeScanner/index.html",
-    "static/css/main.7744963c.chunk.css.map": "/barcodeScanner/static/css/main.7744963c.chunk.css.map",
+    "static/css/main.4a5ef915.chunk.css.map": "/barcodeScanner/static/css/main.4a5ef915.chunk.css.map",
     "static/js/2.f08295f5.chunk.js.LICENSE.txt": "/barcodeScanner/static/js/2.f08295f5.chunk.js.LICENSE.txt",
     "static/js/3.8a4a7c17.chunk.js.LICENSE.txt": "/barcodeScanner/static/js/3.8a4a7c17.chunk.js.LICENSE.txt",
     "static/media/error_beep.ea0f5342.mp3": "/barcodeScanner/static/media/error_beep.ea0f5342.mp3",
@@ -19,7 +19,7 @@
   "entrypoints": [
     "static/js/runtime-main.4ea7edb4.js",
     "static/js/2.f08295f5.chunk.js",
-    "static/css/main.7744963c.chunk.css",
+    "static/css/main.4a5ef915.chunk.css",
     "static/js/main.06a20ed1.chunk.js"
   ]
 }
