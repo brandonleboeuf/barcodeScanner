@@ -80,9 +80,11 @@ const handleSubmit = (e) => {
 
   for (let item in airtableData) {
     if (
-      airtableData[item].firstName.toLowerCase().trim() === e.target.firstName.value.toLowerCase().trim() && airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()) {
+        airtableData[item].firstName.toLowerCase().trim() === e.target.firstName.value.toLowerCase().trim() && 
+        airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()
+      ) {
 
-     
+      setData(item)
       setManualCheckIn({
         found: "found",
         id: airtableData[item].id,
@@ -144,6 +146,11 @@ const runDataFetcher = () => {
 });
 }
 
+const handleReset = () => {
+  inputEl.current.reset()
+  setManualCheckIn("")
+}
+
   return (
     <div className="App">
     <h1>Scan Barcode for access to the event.</h1>
@@ -164,7 +171,7 @@ const runDataFetcher = () => {
         <div className="new_scan">
           <span className="box ">&nbsp;</span>
           <button onClick={()=> runDataFetcher()}>New Scan</button>
-          <button style={{fontSize: "1rem"}} onClick={()=> setSearch(!search)}>{search ? "Cancel" : "Search Database" }</button>
+          <button style={{fontSize: "1rem"}} onClick={()=> setSearch(!search)}>{search ? "Close Database Search" : "Search Database" }</button>
         </div>
       )}
       {data !== "canceled" && airtableData?.[data] && !airtableData?.[data]?.CheckedIn && (
@@ -199,22 +206,33 @@ const runDataFetcher = () => {
       {/* SEARCH */}
       {search && (
 
-      <div>
-      <h4>Search Database</h4>
+      <div className="search_wrapper">
+      <h2>Search Database</h2>
       {manualCheckIn && (
         <div>
-        {manualCheckIn?.found === "found" && (
+        {manualCheckIn?.found === "found" && !airtableData[data]?.CheckedIn && (
           <div className="found">
           <hr />
             <h3>Found</h3>
             <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Found in database.</p>
             <div style={{display: "flex"}}>
               <button className="add" onClick={() => handleCheckIn()}>Check in manually?</button>
-              <button className="clear" onClick={() => setManualCheckIn("")}>Cancle</button>
+              <button className="clear" onClick={() => setManualCheckIn("")}>Cancel</button>
             </div>
             <hr />
           </div>
-        )}
+        )} 
+        {manualCheckIn?.found === "found" && airtableData[data]?.CheckedIn && (
+          <div className="found">
+          <hr />
+            <h3>Already checked in.</h3>
+            <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Found in database, but already checked in.</p>
+            <div style={{display: "flex"}}>
+              <button className="clear" onClick={() => setManualCheckIn("")}>Close</button>
+            </div>
+            <hr />
+          </div>
+        ) }
 
         {manualCheckIn?.found === "not found" && (
           <div>
@@ -241,8 +259,8 @@ const runDataFetcher = () => {
             <label htmlFor="lastName">Last Name <input id="lastName"/></label>
           </div>
           <button className="add" type="submit">Search</button>
-          <button className="clear" onClick={()=> inputEl.current.reset() }>Clear Fields</button>
         </form>
+        <button className="clear" onClick={()=> handleReset() }>Clear Fields</button>
       </div>
       )}
       </section>

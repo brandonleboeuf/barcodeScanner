@@ -87,7 +87,7 @@ button:hover {
 .codes {
   display: flex;
   flex-direction: column;
-  margin-top: 100px;
+  /* margin-top: 100px; */
 }
 
 .add {
@@ -115,4 +115,9 @@ button:hover {
 input {
   padding: 10px 5px;
   margin: 5px 0;
+}
+
+.search_wrapper {
+  border-top: 10px solid black;
+  margin-top: 25px;
 }
