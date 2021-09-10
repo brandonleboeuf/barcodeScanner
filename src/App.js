@@ -73,7 +73,6 @@ function App() {
     
   },[data])
 
-  console.log({manualCheckIn})
 
 const handleSubmit = (e) => {
   e.preventDefault()
@@ -84,9 +83,10 @@ const handleSubmit = (e) => {
         airtableData[item].lastName.toLowerCase().trim() === e.target.lastName.value.toLowerCase().trim()
       ) {
 
-      setData(item)
+     
       setManualCheckIn({
         found: "found",
+        idCode: airtableData[item].idCode,
         id: airtableData[item].id,
         firstName: e.target.firstName.value,
         lastName: e.target.lastName.value,
@@ -101,27 +101,31 @@ const handleSubmit = (e) => {
     lastName: e.target.lastName.value,
   })
 }
-
 const handleCheckIn = () => {
-  playGoodSound()
-  base('Table 1').update([
-    {
-      "id": manualCheckIn.id,
-      "fields": {
-        "CheckedIn": true
+
+  if (!airtableData[manualCheckIn.id]?.CheckedIn) {
+    playGoodSound()
+    base('Table 1').update([
+      {
+        "id": manualCheckIn.id,
+        "fields": {
+          "CheckedIn": true
+        }
       }
-    }
-  ], function(err, records) {
-    if (err) {
-      console.error(err);
-      return;
-    }
-   
-    setManualCheckIn((state) => (
-      {...state,
-      found: "success",
-    }))
-  });
+    ], function(err, records) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+     
+      setManualCheckIn((state) => (
+        {...state,
+        found: "success",
+      }))
+    });
+  } else {
+    playBadSound()
+  }
 } 
 
 const runDataFetcher = () => {
@@ -211,7 +215,7 @@ const handleReset = () => {
       <h2>Search Database</h2>
       {manualCheckIn && (
         <div>
-        {manualCheckIn?.found === "found" && !airtableData[data]?.CheckedIn && (
+        {manualCheckIn?.found === "found" && !airtableData[manualCheckIn?.idCode]?.CheckedIn && (
           <div className="found">
           <hr />
             <h3>Found</h3>
@@ -223,7 +227,7 @@ const handleReset = () => {
             <hr />
           </div>
         )} 
-        {manualCheckIn?.found === "found" && airtableData[data]?.CheckedIn && (
+        {manualCheckIn?.found === "found" && airtableData[manualCheckIn?.idCode]?.CheckedIn && (
           <div className="found">
           <hr />
             <h3>Already checked in.</h3>
