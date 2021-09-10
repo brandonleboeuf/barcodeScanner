@@ -148,7 +148,7 @@ const runDataFetcher = () => {
     <div className="App">
     <h1>Scan Barcode for access to the event.</h1>
       {!data ? (
-        <div className="new_scan">
+        <div className="new_scan ">
           <div className="box holder">
             <BarcodeScannerComponent
               width={400}
@@ -162,7 +162,7 @@ const runDataFetcher = () => {
         </div>
       ) : (
         <div className="new_scan">
-          <span className="box">&nbsp;</span>
+          <span className="box ">&nbsp;</span>
           <button onClick={()=> runDataFetcher()}>New Scan</button>
           <button style={{fontSize: "1rem"}} onClick={()=> setSearch(!search)}>{search ? "Cancel" : "Search Database" }</button>
         </div>
@@ -172,6 +172,7 @@ const runDataFetcher = () => {
           <h1 className="success">SUCCESS</h1>
           <h2>{airtableData[data].firstName} {airtableData[data].lastName} has been checked in.</h2>
           <p> Enjoy the event!</p>
+          <hr />
         </div>
         )
       }
@@ -200,15 +201,18 @@ const runDataFetcher = () => {
 
       <div>
       <h4>Search Database</h4>
-      {manualCheckIn ? (
+      {manualCheckIn && (
         <div>
         {manualCheckIn?.found === "found" && (
-          <div>
+          <div className="found">
+          <hr />
+            <h3>Found</h3>
             <p><strong>{manualCheckIn.firstName} {manualCheckIn.lastName}: </strong>Found in database.</p>
             <div style={{display: "flex"}}>
               <button className="add" onClick={() => handleCheckIn()}>Check in manually?</button>
               <button className="clear" onClick={() => setManualCheckIn("")}>Cancle</button>
             </div>
+            <hr />
           </div>
         )}
 
@@ -219,19 +223,19 @@ const runDataFetcher = () => {
           </div>
         )}
 
+        {manualCheckIn?.found === "success" && (
+          <div>
+            <h1 className="success">SUCCESS</h1>
+            <h2>{manualCheckIn.firstName} {manualCheckIn.lastName} has been checked in.</h2>
+            <p> Enjoy the event!</p>
+            <hr />
+          </div>
+        )}
         
-        </div>) : (
-        <>
-          {manualCheckIn?.found === "success" && (
-              <div>
-              <h1 className="success">SUCCESS</h1>
-              <h2>{manualCheckIn.firstName} {manualCheckIn.lastName} has been checked in.</h2>
-              <p> Enjoy the event!</p>
-            </div>
-          )}
+        </div> )}
         <form onSubmit={(e) => handleSubmit(e)}  ref={inputEl}>
-          <div style={{display: "flex", flexDirection: "column"}}>
-
+          <div className="form">
+            <h4>Search for:</h4>
             <label htmlFor="firstName">First Name <input id="firstName"/></label>
             
             <label htmlFor="lastName">Last Name <input id="lastName"/></label>
@@ -239,8 +243,6 @@ const runDataFetcher = () => {
           <button className="add" type="submit">Search</button>
           <button className="clear" onClick={()=> inputEl.current.reset() }>Clear Fields</button>
         </form>
-        </>
-        )}
       </div>
       )}
       </section>
