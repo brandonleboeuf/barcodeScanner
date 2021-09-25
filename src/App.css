@@ -1,7 +1,7 @@
 .App {
   max-width: 400px;
-  margin : auto;
-  padding:0 5px;
+  margin: auto;
+  padding: 0 5px;
 }
 
 .App-logo {
@@ -71,18 +71,18 @@ button:hover {
 .new_scan {
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: start;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .box {
   width: 100%;
   min-height: 200px;
-  background-color: rgba(128, 128, 128, .9);
+  background-color: rgba(128, 128, 128, 0.9);
 }
 
 .holder {
-  background-color: rgba(128, 128, 128, .3);
+  background-color: rgba(128, 128, 128, 0.3);
 }
 
 .codes {
@@ -92,16 +92,15 @@ button:hover {
 }
 
 .add {
-    font-size: 1rem;
-    margin-right: 5px;
-    background-color: green;
-  }
-  
-  .clear {
+  font-size: 1rem;
+  margin-right: 5px;
+  background-color: green;
+}
+
+.clear {
   font-size: 1rem;
   margin-right: 5px;
   background-color: red;
-
 }
 
 .found {

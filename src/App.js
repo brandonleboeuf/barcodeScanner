@@ -16,8 +16,8 @@ const AVENTRI_CHECK_IN_URL =
 function App() {
   const [openScan, setOpenScan] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [aventriData, setAventriData] = useState({})
   const [manualCheckIn, setManualCheckIn] = useState()
+  const [aventriData, setAventriData] = useState({})
   const [aventriAccessToken, setAventriAccessToken] = useState()
   const [aventriMessage, setAventriMessage] = useState()
 
@@ -49,6 +49,12 @@ function App() {
     if (accesstoken) setAventriAccessToken(accesstoken)
   }
 
+  useEffect(() => {
+    console.log('App starting up...')
+    console.log('Retrieving initial access token and attendee data:')
+    getAuthToken()
+  }, [])
+
   const getData = useCallback(async () => {
     if (!aventriAccessToken) return
     console.log('FETCH: getData')
@@ -77,7 +83,8 @@ function App() {
         tempObject[record.attendeeid] = obj
       })
     } else {
-      // if Aventri accesToken is stale, call getData recursively
+      // if Aventri accesToken is stale, call getAuthToken followed by getData
+      getAuthToken()
       getData()
     }
     setAventriData(tempObject)
@@ -86,12 +93,6 @@ function App() {
   useEffect(() => {
     getData()
   }, [getData])
-
-  useEffect(() => {
-    console.log('App starting up...')
-    console.log('Retrieving initial access token and attendee data:')
-    getAuthToken()
-  }, [])
 
   const aventriCheckedIn = async (id) => {
     console.log('FETCH: aventriCheckIn')
@@ -159,7 +160,6 @@ function App() {
           firstName: e.target.firstName.value,
           lastName: e.target.lastName.value,
         })
-        return
         // check by reference number
       } else if (aventriData[item].id.trim() === e.target.id.value.trim()) {
         setManualCheckIn({
@@ -168,8 +168,8 @@ function App() {
           firstName: e.target.firstName.value,
           lastName: e.target.lastName.value,
         })
-        return
       }
+      return
     }
 
     setManualCheckIn({
@@ -179,13 +179,12 @@ function App() {
     })
   }
 
-  // when new scan is inniciated
+  // when new scan is initiated
   const handleOpen = () => {
-    getAuthToken()
     getData()
-    setOpenScan(true)
     setSearchOpen(false)
     setManualCheckIn('')
+    setOpenScan(true)
     setAventriMessage('')
   }
   // when scanner is closed by clicking "reset"
@@ -198,10 +197,7 @@ function App() {
     setSearchOpen(!searchOpen)
     setManualCheckIn('')
     setAventriMessage('')
-    if (!searchOpen) {
-      getAuthToken()
-      getData()
-    }
+    !searchOpen && getData()
   }
   // when the manual search is reset
   const handleReset = () => {
