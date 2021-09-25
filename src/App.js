@@ -21,9 +21,9 @@ function App() {
   const [aventriAccessToken, setAventriAccessToken] = useState()
   const [aventriMessage, setAventriMessage] = useState()
 
-  const [playGoodSound] = useSound(goodBeep)
-  const [playBadSound] = useSound(errorBeep)
-  const inputEl = useRef(null)
+  const [playGoodBeep] = useSound(goodBeep)
+  const [playBadBeep] = useSound(errorBeep)
+  const searchFormEl = useRef(null)
 
   const getAuthToken = async () => {
     console.log('FETCH: getAuthToken')
@@ -88,12 +88,14 @@ function App() {
   }, [getData])
 
   useEffect(() => {
+    console.log('App starting up...')
+    console.log('Retrieving initial access token and attendee data:')
     getAuthToken()
   }, [])
 
   const aventriCheckedIn = async (id) => {
-    const formdata = new FormData()
     console.log('FETCH: aventriCheckIn')
+    const formdata = new FormData()
 
     const requestOptions = {
       method: 'POST',
@@ -120,10 +122,10 @@ function App() {
 
   const handleCheckIn = (result, data) => {
     if (data?.description) {
-      playGoodSound()
+      playGoodBeep()
       setAventriMessage({ id: result, success: data.description })
     } else if (data?.error?.data) {
-      playBadSound()
+      playBadBeep()
       setAventriMessage({ id: result, error: data?.error.data })
     } else {
       setAventriMessage({ error: 'Something went wrong. Please try again' })
@@ -134,7 +136,9 @@ function App() {
     e.preventDefault()
     setAventriMessage('')
 
+    // searches through data from Aventri to see if user being searched is in their database
     for (let item in aventriData) {
+      // check by first / last name
       if (
         aventriData[item].firstName.toLowerCase().trim() ===
           e.target.firstName.value.toLowerCase().trim() &&
@@ -148,6 +152,7 @@ function App() {
           lastName: e.target.lastName.value,
         })
         return
+        // check by reference number
       } else if (aventriData[item].id.trim() === e.target.id.value.trim()) {
         setManualCheckIn({
           found: 'found',
@@ -166,6 +171,7 @@ function App() {
     })
   }
 
+  // when new scan is inniciated
   const handleOpen = () => {
     getAuthToken()
     getData()
@@ -174,19 +180,24 @@ function App() {
     setManualCheckIn('')
     setAventriMessage('')
   }
+  // when scanner is closed by clicking "reset"
   const handleClose = () => {
     setOpenScan(false)
     setAventriMessage('')
   }
+  // when "Search Database" is clicked
   const handleSearch = () => {
-    getAuthToken()
-    getData()
     setSearchOpen(!searchOpen)
     setManualCheckIn('')
     setAventriMessage('')
+    if (!searchOpen) {
+      getAuthToken()
+      getData()
+    }
   }
+  // when the manual search is reset
   const handleReset = () => {
-    inputEl.current.reset()
+    searchFormEl.current.reset()
     setManualCheckIn('')
     setAventriMessage('')
   }
@@ -299,7 +310,7 @@ function App() {
                   )}
                 </div>
               )}
-            <form onSubmit={(e) => handleSubmit(e)} ref={inputEl}>
+            <form onSubmit={(e) => handleSubmit(e)} ref={searchFormEl}>
               <div className="form">
                 <h4>Search by name:</h4>
                 <label htmlFor="firstName">
