@@ -1,6 +1,7 @@
 .App {
   max-width: 400px;
   margin : auto;
+  padding:0 5px;
 }
 
 .App-logo {
@@ -115,9 +116,10 @@ button:hover {
 input {
   padding: 10px 5px;
   margin: 5px 0;
+  font-size: 1rem;
 }
 
 .search_wrapper {
   border-top: 10px solid black;
-  margin-top: 25px;
+  margin: 25px 0;
 }
