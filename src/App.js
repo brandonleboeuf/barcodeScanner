@@ -28,7 +28,7 @@ function App() {
   useEffect(() => {
     getAuthToken()
     getData()
-  }, [aventriAccessToken, aventriMessage])
+  })
 
   const getAuthToken = async () => {
     const formdata = new FormData()
