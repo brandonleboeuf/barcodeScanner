@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 
 import useSound from 'use-sound'
 import BarcodeScannerComponent from 'react-qr-barcode-scanner'
@@ -26,6 +26,7 @@ function App() {
   const inputEl = useRef(null)
 
   const getAuthToken = async () => {
+    console.log('FETCH: getAuthToken')
     const formdata = new FormData()
     formdata.append('accountid', AVENTRI_ID)
     formdata.append('key', AVENTRI_KEY)
@@ -48,8 +49,9 @@ function App() {
     if (accesstoken) setAventriAccessToken(accesstoken)
   }
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     if (!aventriAccessToken) return
+    console.log('FETCH: getData')
     const requestOptions = {
       method: 'GET',
       redirect: 'follow',
@@ -71,24 +73,27 @@ function App() {
           id: record.attendeeid,
           firstName: firstName,
           lastName: lastName,
-          CheckedIn: undefined,
         }
         tempObject[record.attendeeid] = obj
       })
     } else {
-      // if accestoken is stale, call getData recursively
+      // if Aventri accesToken is stale, call getData recursively
       getData()
     }
     setAventriData(tempObject)
-  }
+  }, [aventriAccessToken])
+
+  useEffect(() => {
+    getData()
+  }, [getData])
 
   useEffect(() => {
     getAuthToken()
-    getData()
-  })
+  }, [])
 
   const aventriCheckedIn = async (id) => {
     const formdata = new FormData()
+    console.log('FETCH: aventriCheckIn')
 
     const requestOptions = {
       method: 'POST',
@@ -241,58 +246,35 @@ function App() {
               !aventriMessage?.success &&
               !aventriMessage?.error && (
                 <div>
-                  {manualCheckIn?.found === 'found' &&
-                    !aventriData[manualCheckIn?.id]?.CheckedIn && (
-                      <div className="found">
-                        <hr />
-                        <h3>Found</h3>
-                        <p>
-                          <strong>
-                            {aventriData[manualCheckIn.id].firstName}{' '}
-                            {aventriData[manualCheckIn.id].lastName} (
-                            {manualCheckIn.id}) :{' '}
-                          </strong>
-                          Found in database.
-                        </p>
-                        <div style={{ display: 'flex' }}>
-                          <button
-                            className="add"
-                            onClick={() => handleCapture(manualCheckIn.id)}
-                          >
-                            Check in manually?
-                          </button>
-                          <button
-                            className="clear"
-                            onClick={() => setManualCheckIn('')}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                        <hr />
+                  {manualCheckIn?.found === 'found' && (
+                    <div className="found">
+                      <hr />
+                      <h3>Found</h3>
+                      <p>
+                        <strong>
+                          {aventriData[manualCheckIn.id].firstName}{' '}
+                          {aventriData[manualCheckIn.id].lastName} (
+                          {manualCheckIn.id}) :{' '}
+                        </strong>
+                        Found in database.
+                      </p>
+                      <div style={{ display: 'flex' }}>
+                        <button
+                          className="add"
+                          onClick={() => handleCapture(manualCheckIn.id)}
+                        >
+                          Check in manually?
+                        </button>
+                        <button
+                          className="clear"
+                          onClick={() => setManualCheckIn('')}
+                        >
+                          Cancel
+                        </button>
                       </div>
-                    )}
-                  {manualCheckIn?.found === 'found' &&
-                    aventriData[manualCheckIn?.id]?.CheckedIn && (
-                      <div className="found">
-                        <hr />
-                        <h3>Already checked in.</h3>
-                        <p>
-                          <strong>
-                            {manualCheckIn.firstName} {manualCheckIn.lastName}:{' '}
-                          </strong>
-                          Found in database, but already checked in.
-                        </p>
-                        <div style={{ display: 'flex' }}>
-                          <button
-                            className="clear"
-                            onClick={() => setManualCheckIn('')}
-                          >
-                            Close
-                          </button>
-                        </div>
-                        <hr />
-                      </div>
-                    )}
+                      <hr />
+                    </div>
+                  )}
                   {manualCheckIn?.found === 'not found' && (
                     <div>
                       <h2>Not found in database.</h2>
@@ -304,7 +286,6 @@ function App() {
                       </button>
                     </div>
                   )}
-
                   {manualCheckIn?.found === 'success' && (
                     <div>
                       <h1 className="success">SUCCESS</h1>
