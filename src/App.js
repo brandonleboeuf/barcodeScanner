@@ -26,7 +26,6 @@ function App() {
   const inputEl = useRef(null)
 
   const getAuthToken = async () => {
-    console.log('FETCH: getAuthToken')
     const formdata = new FormData()
     formdata.append('accountid', AVENTRI_ID)
     formdata.append('key', AVENTRI_KEY)
@@ -34,9 +33,6 @@ function App() {
     const requestOptions = {
       method: 'POST',
       body: formdata,
-      headers: {
-        'Access-Control-Allow-Origin': 'https://aventri-barcode.netlify.app/',
-      },
       redirect: 'follow',
     }
 
@@ -53,9 +49,6 @@ function App() {
   }
 
   const getData = async () => {
-    console.log('FETCH: getData')
-    getAuthToken()
-
     if (!aventriAccessToken) return
     const requestOptions = {
       method: 'GET',
@@ -89,17 +82,17 @@ function App() {
     setAventriData(tempObject)
   }
 
-  const aventriCheckedIn = async (id) => {
-    console.log('FETCH: aventriCheckedIn')
+  useEffect(() => {
+    getAuthToken()
+    getData()
+  })
 
+  const aventriCheckedIn = async (id) => {
     const formdata = new FormData()
 
     const requestOptions = {
       method: 'POST',
       body: formdata,
-      headers: {
-        'Access-Control-Allow-Origin': 'https://aventri-barcode.netlify.app/',
-      },
       redirect: 'follow',
     }
 
@@ -169,6 +162,8 @@ function App() {
   }
 
   const handleOpen = () => {
+    getAuthToken()
+    getData()
     setOpenScan(true)
     setSearchOpen(false)
     setManualCheckIn('')
@@ -179,6 +174,8 @@ function App() {
     setAventriMessage('')
   }
   const handleSearch = () => {
+    getAuthToken()
+    getData()
     setSearchOpen(!searchOpen)
     setManualCheckIn('')
     setAventriMessage('')
@@ -188,11 +185,6 @@ function App() {
     setManualCheckIn('')
     setAventriMessage('')
   }
-
-  useEffect(() => {
-    getAuthToken()
-    getData()
-  })
 
   return (
     <div className="App">
