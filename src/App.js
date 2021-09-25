@@ -160,6 +160,7 @@ function App() {
           firstName: e.target.firstName.value,
           lastName: e.target.lastName.value,
         })
+        return
         // check by reference number
       } else if (aventriData[item].id.trim() === e.target.id.value.trim()) {
         setManualCheckIn({
@@ -168,8 +169,8 @@ function App() {
           firstName: e.target.firstName.value,
           lastName: e.target.lastName.value,
         })
+        return
       }
-      return
     }
 
     setManualCheckIn({
