@@ -116,6 +116,11 @@ function App() {
 
   const handleCapture = async (result) => {
     setOpenScan(false)
+    if (!aventriData[result]) {
+      const message = 'Not found in database.'
+      handleCheckIn(result, message)
+      return
+    }
     const data = await aventriCheckedIn(result)
     handleCheckIn(result, data)
   }
@@ -127,6 +132,9 @@ function App() {
     } else if (data?.error?.data) {
       playBadBeep()
       setAventriMessage({ id: result, error: data?.error.data })
+    } else if (data) {
+      playBadBeep()
+      setAventriMessage({ error: `${result}: ${data}` })
     } else {
       setAventriMessage({ error: 'Something went wrong. Please try again' })
     }
@@ -232,8 +240,8 @@ function App() {
           <h1 className="error">DENIED</h1>
           <h2>
             {' '}
-            {aventriData[aventriMessage.id].firstName}{' '}
-            {aventriData[aventriMessage.id].lastName}
+            {aventriData[aventriMessage.id]?.firstName}{' '}
+            {aventriData[aventriMessage.id]?.lastName}
           </h2>
           <p>{aventriMessage.error}</p>
         </div>
@@ -242,8 +250,8 @@ function App() {
         <div>
           <h1 className="success">SUCCESS</h1>
           <h2>
-            {aventriData[aventriMessage.id].firstName}{' '}
-            {aventriData[aventriMessage.id].lastName}
+            {aventriData[aventriMessage.id]?.firstName}{' '}
+            {aventriData[aventriMessage.id]?.lastName}
           </h2>
           <p>Thank you for joining us! Please enjoy the event!</p>
         </div>
