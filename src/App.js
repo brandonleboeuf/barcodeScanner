@@ -192,7 +192,7 @@ function App() {
   useEffect(() => {
     getAuthToken()
     getData()
-  }, [])
+  })
 
   return (
     <div className="App">
