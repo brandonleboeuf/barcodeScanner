@@ -144,7 +144,11 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault()
     setAventriMessage('')
-
+    if (
+      (!e.target.firstName.value || !e.target.lastName.value) &&
+      !e.target.id.value
+    )
+      return
     // searches through data from Aventri to see if user being searched is in their database
     for (let item in aventriData) {
       // check by first / last name
@@ -221,12 +225,16 @@ function App() {
               }}
             />
           </div>
-          <button onClick={() => handleClose()}>Reset</button>
+          <button className="clear" onClick={() => handleClose()}>
+            Reset
+          </button>
         </div>
       ) : (
         <div className="new_scan">
-          <span className="box ">&nbsp;</span>
-          <button onClick={() => handleOpen()}>New Scan</button>
+          <span className="box">&nbsp;</span>
+          <button className="add" onClick={() => handleOpen()}>
+            New Scan
+          </button>
           <button style={{ fontSize: '1rem' }} onClick={() => handleSearch()}>
             {searchOpen ? 'Close Database Search' : 'Search Database'}
           </button>

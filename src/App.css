@@ -75,6 +75,10 @@ button:hover {
   align-items: flex-start;
 }
 
+.new_scan .add {
+  font-size: 1.5rem;
+}
+
 .box {
   width: 100%;
   min-height: 200px;
@@ -121,4 +125,5 @@ input {
 .search_wrapper {
   border-top: 10px solid black;
   margin: 25px 0;
+  margin-bottom: 25px;
 }
