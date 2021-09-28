@@ -20,6 +20,9 @@ function App() {
   const [aventriData, setAventriData] = useState({})
   const [aventriAccessToken, setAventriAccessToken] = useState()
   const [aventriMessage, setAventriMessage] = useState()
+  const [eventId, setEventId] = useState(AVENTRI_EVENT_ID)
+  const [changeEventId, setChangeEventId] = useState(false)
+  const [error, setError] = useState()
 
   const [playGoodBeep] = useSound(goodBeep)
   const [playBadBeep] = useSound(errorBeep)
@@ -43,7 +46,7 @@ function App() {
     )
       .then((response) => response.text())
       .then((result) => result)
-      .catch((error) => console.log('error', error))
+      .catch((error) => setError(error))
 
     const { accesstoken } = await JSON.parse(data)
     if (accesstoken) setAventriAccessToken(accesstoken)
@@ -63,36 +66,28 @@ function App() {
       redirect: 'follow',
     }
     const getAttendees = await fetch(
-      `https://api-na.eventscloud.com/api/v2/ereg/listAttendees.json?accesstoken=${aventriAccessToken}&eventid=${AVENTRI_EVENT_ID}`,
+      `https://api-na.eventscloud.com/api/v2/ereg/listAttendees.json?accesstoken=${aventriAccessToken}&eventid=${eventId}`,
       requestOptions
     )
       .then((response) => response.text())
       .then((result) => result)
-      .catch((error) => console.dir(error))
+      .catch((error) => setError(error))
 
     const jasonData = await JSON.parse(getAttendees)
     let tempObject = {}
-    if (Array.isArray(jasonData)) {
-      jasonData.forEach((record) => {
-        const [firstName, lastName] = record.name.split(' ')
-        const obj = {
-          id: record.attendeeid,
-          firstName: firstName,
-          lastName: lastName,
-        }
-        tempObject[record.attendeeid] = obj
-      })
-    } else {
-      // if Aventri accesToken is stale, call getAuthToken followed by getData
-      getAuthToken()
-      getData()
-    }
-    setAventriData(tempObject)
-  }, [aventriAccessToken])
+    if (!Array.isArray(jasonData)) return
+    jasonData.forEach((record) => {
+      const [firstName, lastName] = record.name.split(' ')
+      const obj = {
+        id: record.attendeeid,
+        firstName: firstName,
+        lastName: lastName,
+      }
+      tempObject[record.attendeeid] = obj
+    })
 
-  useEffect(() => {
-    getData()
-  }, [getData])
+    setAventriData(tempObject)
+  }, [aventriAccessToken, eventId])
 
   const aventriCheckedIn = async (id) => {
     console.log('FETCH: aventriCheckIn')
@@ -105,12 +100,12 @@ function App() {
     }
 
     const message = await fetch(
-      `${AVENTRI_CHECK_IN_URL}${aventriAccessToken}&eventid=${AVENTRI_EVENT_ID}&attendeeid=${id}`,
+      `${AVENTRI_CHECK_IN_URL}${aventriAccessToken}&eventid=${eventId}&attendeeid=${id}`,
       requestOptions
     )
       .then((response) => response.text())
       .then((result) => result)
-      .catch((error) => error)
+      .catch((error) => setError(error))
 
     return JSON.parse(message)
   }
@@ -211,9 +206,70 @@ function App() {
     setAventriMessage('')
   }
 
+  // allows user to change the event ID
+  const handleEventIdSubmit = (e) => {
+    e.preventDefault()
+
+    setChangeEventId(false)
+    if (e.target.eventId.value.length <= 5)
+      setError('Invalid event ID (too short)')
+    setEventId(e.target.eventId.value)
+  }
+
+  const handleEventIdReset = () => {
+    setChangeEventId(false)
+    setEventId(AVENTRI_EVENT_ID)
+  }
+
+  const handleFactoryReset = () => {
+    setEventId(AVENTRI_EVENT_ID)
+    setError(null)
+    setOpenScan(false)
+    setAventriMessage('')
+  }
+  if (error)
+    return (
+      <div className="App">
+        <h3>Something went wrong.</h3>
+        <p>Message: {error}</p>
+        <p>Click "RESET" to restore default settings</p>
+        <button onClick={handleFactoryReset}>RESET</button>
+      </div>
+    )
+
+  if (changeEventId)
+    return (
+      <div className="App">
+        <h2>Enter the six digit Aventri event code </h2>
+        <form onSubmit={handleEventIdSubmit}>
+          <label htmlFor="eventId">
+            Event ID: <input id="eventId" />
+          </label>
+          <div style={{ display: 'flex' }}>
+            <button
+              style={{ marginRight: '1rem' }}
+              className="clear"
+              onClick={() => setChangeEventId(false)}
+            >
+              CANCEL
+            </button>
+            <button className="add" type="submit">
+              SAVE
+            </button>
+          </div>
+        </form>
+        <p>click RESET to use default event ID: {AVENTRI_EVENT_ID}</p>
+        <button onClick={handleEventIdReset}>Reset</button>
+      </div>
+    )
+
   return (
     <div className="App">
-      <h1>Scan Barcode for access to the event.</h1>
+      <div style={{ display: 'flex', cursor: 'pointer' }}>
+        <h1 onClick={() => setChangeEventId(true)}>Event ID: {eventId}</h1>
+      </div>
+
+      <h2>Scan Barcode to check in Attendee.</h2>
       {openScan ? (
         <div className="new_scan ">
           <div className="box holder">
