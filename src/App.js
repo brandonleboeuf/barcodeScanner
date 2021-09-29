@@ -72,6 +72,9 @@ function App() {
       .then((response) => response.text())
       .then((result) => result)
       .catch((error) => setError(error))
+    if (getAttendees?.error?.data) {
+      console.log('ERRPRRRRRR', getAttendees)
+    }
 
     const jasonData = await JSON.parse(getAttendees)
     let tempObject = {}
@@ -222,11 +225,18 @@ function App() {
   }
 
   const handleFactoryReset = () => {
-    setEventId(AVENTRI_EVENT_ID)
-    setError(null)
-    setOpenScan(false)
+    // all state reverted back to original state
     setAventriMessage('')
+    setOpenScan(false)
+    setSearchOpen(false)
+    setManualCheckIn(null)
+    setAventriData({})
+    setAventriAccessToken(null)
+    setEventId(AVENTRI_EVENT_ID)
+    setChangeEventId(false)
+    setError(null)
   }
+
   if (error)
     return (
       <div className="App">
