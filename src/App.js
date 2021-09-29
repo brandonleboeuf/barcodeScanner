@@ -45,7 +45,9 @@ function App() {
       requestOptions
     )
       .then((response) => response.text())
-      .then((result) => result)
+      .then((result) => {
+        return result
+      })
       .catch((error) => console.log(error))
 
     const jsonData = await JSON.parse(data)
@@ -67,44 +69,49 @@ function App() {
     getAuthToken()
   }, [])
 
-  const getData = useCallback(async () => {
-    if (!aventriAccessToken) return
-    console.log('FETCH: getData')
-    const requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    }
-    const getAttendees = await fetch(
-      `https://api-na.eventscloud.com/api/v2/ereg/listAttendees.json?accesstoken=${aventriAccessToken}&eventid=${eventId}`,
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) => result)
-      .catch((error) => console.log(error))
-
-    const jsonData = await JSON.parse(getAttendees)
-    if (jsonData.error) {
-      let errorArray = []
-      for (let item in jsonData) {
-        errorArray.push(JSON.stringify(jsonData[item]))
+  const getData = useCallback(
+    async (id = null) => {
+      if (!aventriAccessToken) return
+      console.log('FETCH: getData')
+      const requestOptions = {
+        method: 'GET',
+        redirect: 'follow',
       }
-      setError(errorArray[0])
-      return
-    }
+      const getAttendees = await fetch(
+        `https://api-na.eventscloud.com/api/v2/ereg/listAttendees.json?accesstoken=${aventriAccessToken}&eventid=${
+          id || eventId
+        }`,
+        requestOptions
+      )
+        .then((response) => response.text())
+        .then((result) => result)
+        .catch((error) => console.log(error))
 
-    let tempObject = {}
-    jsonData.forEach((record) => {
-      const [firstName, lastName] = record.name.split(' ')
-      const obj = {
-        id: record.attendeeid,
-        firstName: firstName,
-        lastName: lastName,
+      const jsonData = await JSON.parse(getAttendees)
+      if (jsonData.error) {
+        let errorArray = []
+        for (let item in jsonData) {
+          errorArray.push(JSON.stringify(jsonData[item]))
+        }
+        setError(errorArray[0])
+        return
       }
-      tempObject[record.attendeeid] = obj
-    })
 
-    setAventriData(tempObject)
-  }, [aventriAccessToken, eventId])
+      let tempObject = {}
+      jsonData.forEach((record) => {
+        const [firstName, lastName] = record.name.split(' ')
+        const obj = {
+          id: record.attendeeid,
+          firstName: firstName,
+          lastName: lastName,
+        }
+        tempObject[record.attendeeid] = obj
+      })
+
+      setAventriData(tempObject)
+    },
+    [aventriAccessToken, eventId]
+  )
 
   const aventriCheckedIn = async (id) => {
     console.log('FETCH: aventriCheckIn')
@@ -239,9 +246,15 @@ function App() {
     e.preventDefault()
 
     setChangeEventId(false)
-    if (e.target.eventId.value.length <= 5)
+    if (e.target.eventId.value.length <= 5) {
       setError('Invalid event ID (too short)')
+      return
+    }
     setEventId(e.target.eventId.value)
+    if (e.target.eventId.value !== AVENTRI_EVENT_ID) {
+      // fetches auth token with new event id
+      getData(e.target.eventId.value)
+    }
   }
 
   const handleEventIdReset = () => {
@@ -305,7 +318,7 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{ display: 'flex', cursor: 'pointer' }}>
+      <div style={{ cursor: 'pointer' }}>
         <h1 onClick={() => setChangeEventId(true)}>Event ID: {eventId}</h1>
       </div>
 
