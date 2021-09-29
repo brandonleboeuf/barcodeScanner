@@ -46,10 +46,19 @@ function App() {
     )
       .then((response) => response.text())
       .then((result) => result)
-      .catch((error) => setError(error))
+      .catch((error) => console.log(error))
 
-    const { accesstoken } = await JSON.parse(data)
-    if (accesstoken) setAventriAccessToken(accesstoken)
+    const jsonData = await JSON.parse(data)
+    if (jsonData.error) {
+      let errorArray = []
+      for (let item in jsonData) {
+        errorArray.push(JSON.stringify(jsonData[item]))
+      }
+      setError(errorArray[0])
+      return
+    }
+
+    if (jsonData.accesstoken) setAventriAccessToken(jsonData.accesstoken)
   }
 
   useEffect(() => {
@@ -71,15 +80,20 @@ function App() {
     )
       .then((response) => response.text())
       .then((result) => result)
-      .catch((error) => setError(error))
-    if (getAttendees?.error?.data) {
-      console.log('ERRPRRRRRR', getAttendees)
+      .catch((error) => console.log(error))
+
+    const jsonData = await JSON.parse(getAttendees)
+    if (jsonData.error) {
+      let errorArray = []
+      for (let item in jsonData) {
+        errorArray.push(JSON.stringify(jsonData[item]))
+      }
+      setError(errorArray[0])
+      return
     }
 
-    const jasonData = await JSON.parse(getAttendees)
     let tempObject = {}
-    if (!Array.isArray(jasonData)) return
-    jasonData.forEach((record) => {
+    jsonData.forEach((record) => {
       const [firstName, lastName] = record.name.split(' ')
       const obj = {
         id: record.attendeeid,
@@ -108,9 +122,20 @@ function App() {
     )
       .then((response) => response.text())
       .then((result) => result)
-      .catch((error) => setError(error))
+      .catch((error) => console.log(error))
 
-    return JSON.parse(message)
+    const jsonData = JSON.parse(message)
+
+    if (jsonData.error && !jsonData.error.data) {
+      let errorArray = []
+      for (let item in jsonData) {
+        errorArray.push(JSON.stringify(jsonData[item]))
+      }
+      setError(errorArray[0])
+      return
+    }
+
+    return jsonData
   }
 
   const handleCapture = async (result) => {
@@ -241,8 +266,13 @@ function App() {
     return (
       <div className="App">
         <h3>Something went wrong.</h3>
-        <p>Message: {error}</p>
-        <p>Click "RESET" to restore default settings</p>
+        <p>
+          <strong>Message:</strong>
+        </p>
+        <p>
+          <em>{error}</em>
+        </p>
+        <p>Click "RESET" to restore default settings.</p>
         <button onClick={handleFactoryReset}>RESET</button>
       </div>
     )
