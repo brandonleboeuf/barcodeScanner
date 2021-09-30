@@ -67,11 +67,11 @@ function App() {
     console.log('App starting up...')
     console.log('Retrieving initial access token and attendee data:')
     getAuthToken()
-  }, [])
+  }, [eventId])
 
   const getData = useCallback(
     async (id = null) => {
-      if (!aventriAccessToken) return
+      // if (!aventriAccessToken) return
       console.log('FETCH: getData')
       const requestOptions = {
         method: 'GET',
@@ -101,9 +101,9 @@ function App() {
       jsonData.forEach((record) => {
         const [firstName, lastName] = record.name.split(' ')
         const obj = {
-          id: record.attendeeid,
-          firstName: firstName,
-          lastName: lastName,
+          id: record.attendeeid || null,
+          firstName: firstName || null,
+          lastName: lastName || null,
         }
         tempObject[record.attendeeid] = obj
       })
@@ -174,8 +174,23 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault()
     setAventriMessage('')
+    // if either first/last name fields have content AND id field has content,
+    // alert user that they must choose one method and not both
     if (
-      (!e.target.firstName.value || !e.target.lastName.value) &&
+      (e.target?.firstName.value || e.target?.lastName.value) &&
+      e.target.id.value
+    ) {
+      setManualCheckIn({
+        found: 'not found',
+        message:
+          'Data found in both Search fields. Please choose only one search method (Name or Ref. Number)',
+      })
+      return
+    }
+
+    // if both first/last name fields are empty AND id field is empty, return
+    if (
+      (!e.target?.firstName.value || !e.target?.lastName.value) &&
       !e.target.id.value
     )
       return
@@ -183,10 +198,10 @@ function App() {
     for (let item in aventriData) {
       // check by first / last name
       if (
-        aventriData[item].firstName.toLowerCase().trim() ===
-          e.target.firstName.value.toLowerCase().trim() &&
-        aventriData[item].lastName.toLowerCase().trim() ===
-          e.target.lastName.value.toLowerCase().trim()
+        aventriData[item]?.firstName?.toLowerCase().trim() ===
+          e.target.firstName.value?.toLowerCase().trim() &&
+        aventriData[item]?.lastName?.toLowerCase().trim() ===
+          e.target.lastName.value?.toLowerCase().trim()
       ) {
         setManualCheckIn({
           found: 'found',
@@ -196,7 +211,11 @@ function App() {
         })
         return
         // check by reference number
-      } else if (aventriData[item].id.trim() === e.target.id.value.trim()) {
+      } else if (
+        aventriData[item] &&
+        e.target.id.value > 1 &&
+        aventriData[item].id.trim() === e.target.id.value.trim()
+      ) {
         setManualCheckIn({
           found: 'found',
           id: aventriData[item].id,
@@ -209,6 +228,7 @@ function App() {
 
     setManualCheckIn({
       found: 'not found',
+      message: 'Not found in database.',
       firstName: e.target.firstName.value,
       lastName: e.target.lastName.value,
     })
@@ -244,22 +264,12 @@ function App() {
   // allows user to change the event ID
   const handleEventIdSubmit = (e) => {
     e.preventDefault()
-
+    setSearchOpen(false)
     setChangeEventId(false)
-    if (e.target.eventId.value.length <= 5) {
-      setError('Invalid event ID (too short)')
-      return
-    }
+    if (e.target.eventId.value.length <= 1) return
+    setAventriData({})
     setEventId(e.target.eventId.value)
-    if (e.target.eventId.value !== AVENTRI_EVENT_ID) {
-      // fetches auth token with new event id
-      getData(e.target.eventId.value)
-    }
-  }
-
-  const handleEventIdReset = () => {
-    setChangeEventId(false)
-    setEventId(AVENTRI_EVENT_ID)
+    getData(e.target.eventId.value)
   }
 
   const handleFactoryReset = () => {
@@ -312,7 +322,7 @@ function App() {
           </div>
         </form>
         <p>click RESET to use default event ID: {AVENTRI_EVENT_ID}</p>
-        <button onClick={handleEventIdReset}>Reset</button>
+        <button onClick={handleFactoryReset}>Reset</button>
       </div>
     )
 
@@ -410,7 +420,7 @@ function App() {
                   )}
                   {manualCheckIn?.found === 'not found' && (
                     <div>
-                      <h2>Not found in database.</h2>
+                      <h2>{manualCheckIn.message}</h2>
                       <button
                         className="clear"
                         onClick={() => setManualCheckIn('')}
