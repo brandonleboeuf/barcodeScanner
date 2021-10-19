@@ -69,7 +69,7 @@ function App() {
     getAuthToken()
     if (!aventriAccessToken) return
     getData()
-  }, [eventId, aventriAccessToken])
+  }, [eventId, aventriAccessToken, getData])
 
   const getData = useCallback(
     async (id = null) => {
