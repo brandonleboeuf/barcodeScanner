@@ -61,18 +61,21 @@ function App() {
     }
 
     if (jsonData.accesstoken) setAventriAccessToken(jsonData.accesstoken)
+    if (jsonData.accesstoken) getData(jsonData.accesstoken)
   }
 
   const getData = useCallback(
-    async (id = null) => {
+    async (accessToken = null, id = null) => {
       // if (!aventriAccessToken) return
       console.log('FETCH: getData')
+
+      const token = accessToken || aventriAccessToken
       const requestOptions = {
         method: 'GET',
         redirect: 'follow',
       }
       const getAttendees = await fetch(
-        `https://api-na.eventscloud.com/api/v2/ereg/listAttendees.json?accesstoken=${aventriAccessToken}&eventid=${
+        `https://api-na.eventscloud.com/api/v2/ereg/listAttendees.json?accesstoken=${token}&eventid=${
           id || eventId
         }`,
         requestOptions
