@@ -146,6 +146,7 @@ function App() {
   }
 
   const handleCapture = async (result) => {
+    console.log(result)
     setOpenScan(false)
     if (!aventriData[result]) {
       const message = 'Not found in database.'
@@ -283,6 +284,7 @@ function App() {
     setEventId(AVENTRI_EVENT_ID)
     setChangeEventId(false)
     setError(null)
+    getAuthToken()
   }
 
   if (error)
