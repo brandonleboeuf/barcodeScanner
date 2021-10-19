@@ -335,8 +335,6 @@ function App() {
         <div className="new_scan ">
           <div className="box holder">
             <BarcodeScannerComponent
-              width={400}
-              height={400}
               onUpdate={(err, result) => {
                 if (result) handleCapture(result.text)
               }}
