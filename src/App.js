@@ -28,7 +28,7 @@ function App() {
   const [playBadBeep] = useSound(errorBeep)
   const searchFormEl = useRef(null)
 
-  const getAuthToken = async () => {
+  const getAuthToken = useCallback(async () => {
     console.log('FETCH: getAuthToken')
     const formdata = new FormData()
     formdata.append('accountid', AVENTRI_ID)
@@ -61,8 +61,7 @@ function App() {
     }
 
     if (jsonData.accesstoken) setAventriAccessToken(jsonData.accesstoken)
-    if (jsonData.accesstoken) getData(jsonData.accesstoken)
-  }
+  }, [])
 
   const getData = useCallback(
     async (accessToken = null, id = null) => {
@@ -111,9 +110,9 @@ function App() {
 
   useEffect(() => {
     console.log('App starting up...')
-    console.log('Retrieving initial access token and attendee data:')
+    console.log('Retrieving initial access token:')
     getAuthToken()
-  })
+  }, [getAuthToken])
 
   const aventriCheckedIn = async (id) => {
     console.log('FETCH: aventriCheckIn')
@@ -150,11 +149,6 @@ function App() {
   const handleCapture = async (result) => {
     console.log(result)
     setOpenScan(false)
-    // if (!aventriData[result]) {
-    //   const message = 'Not found in database.'
-    //   handleCheckIn(result, message)
-    //   return
-    // }
     const data = await aventriCheckedIn(result)
     handleCheckIn(result, data)
   }
@@ -239,7 +233,7 @@ function App() {
 
   // when new scan is initiated
   const handleOpen = () => {
-    getData()
+    // getData()
     setSearchOpen(false)
     setManualCheckIn('')
     setOpenScan(true)
