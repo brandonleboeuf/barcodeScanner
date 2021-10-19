@@ -63,14 +63,6 @@ function App() {
     if (jsonData.accesstoken) setAventriAccessToken(jsonData.accesstoken)
   }
 
-  useEffect(() => {
-    console.log('App starting up...')
-    console.log('Retrieving initial access token and attendee data:')
-    getAuthToken()
-    if (!aventriAccessToken) return
-    getData()
-  }, [eventId, aventriAccessToken, getData])
-
   const getData = useCallback(
     async (id = null) => {
       // if (!aventriAccessToken) return
@@ -114,6 +106,14 @@ function App() {
     },
     [aventriAccessToken, eventId]
   )
+
+  useEffect(() => {
+    console.log('App starting up...')
+    console.log('Retrieving initial access token and attendee data:')
+    getAuthToken()
+    if (!aventriAccessToken) return
+    getData()
+  }, [eventId, aventriAccessToken, getData])
 
   const aventriCheckedIn = async (id) => {
     console.log('FETCH: aventriCheckIn')
