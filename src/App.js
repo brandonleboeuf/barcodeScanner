@@ -66,7 +66,6 @@ function App() {
 
   const getData = useCallback(
     async (accessToken = null, id = null) => {
-      // if (!aventriAccessToken) return
       console.log('FETCH: getData')
 
       const token = accessToken || aventriAccessToken
@@ -116,7 +115,7 @@ function App() {
     getAuthToken()
     if (!aventriAccessToken) return
     getData()
-  }, [eventId, aventriAccessToken, getData])
+  }, [eventId, aventriAccessToken, getData, getAuthToken])
 
   const aventriCheckedIn = async (id) => {
     console.log('FETCH: aventriCheckIn')
