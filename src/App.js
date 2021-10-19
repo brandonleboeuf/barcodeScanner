@@ -67,7 +67,9 @@ function App() {
     console.log('App starting up...')
     console.log('Retrieving initial access token and attendee data:')
     getAuthToken()
-  }, [eventId])
+    if (!aventriAccessToken) return
+    getData()
+  }, [eventId, aventriAccessToken])
 
   const getData = useCallback(
     async (id = null) => {
